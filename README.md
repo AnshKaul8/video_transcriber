@@ -11,7 +11,7 @@ The application accepts an MP4 video, extracts its audio using FFmpeg, transcrib
 - Speech-to-text using Faster-Whisper Large-v3
 - Automatically translates all speech into English
 - Supports Hindi, English, and mixed (Hinglish) speech
-- Download transcript as TXT or SRT
+- Download transcript 
 - Simple browser-based interface
 
 ---
