@@ -1,88 +1,165 @@
-# Video Transcriber — Setup Guide
+# 🎥 Video Transcriber
 
-A simple full-stack app: upload an MP4 video, get a downloadable multilingual transcript.
+An AI-powered video transcription application built with **FastAPI** and **Faster-Whisper Large-v3**.
 
-## Folder Structure
+The application accepts an MP4 video, extracts its audio using FFmpeg, transcribes the speech, translates it into English, and allows the transcript to be downloaded as both **TXT** and **SRT** files.
+
+---
+
+## Features
+
+- Upload MP4 videos
+- Automatic audio extraction using FFmpeg
+- Speech-to-text using Faster-Whisper Large-v3
+- Automatically translates all speech into English
+- Supports Hindi, English, and mixed (Hinglish) speech
+- Download transcript as TXT or SRT
+- Simple browser-based interface
+
+---
+
+## Project Structure
+
 ```
 video-transcriber/
+│
 ├── backend/
 │   ├── main.py
-│   ├── requirements.txt
-│   ├── uploads/         (temp video/audio, auto-cleaned)
-│   └── transcripts/     (saved transcripts — this is your private record)
-└── frontend/
-    └── index.html
+│   └── requirements.txt
+│
+├── frontend/
+│   └── index.html
+│
+├── .gitignore
+└── README.md
 ```
 
-## 1. Prerequisites
+---
 
-- Python 3.9+ installed
-- ffmpeg installed and available in PATH
-  - Windows: download from https://ffmpeg.org/download.html, add the `bin` folder to your system PATH
-  - Mac: `brew install ffmpeg`
-  - Linux: `sudo apt install ffmpeg`
+## Requirements
 
-Check it's installed:
-```
+- Python 3.11 or newer
+- FFmpeg installed and added to PATH
+
+Verify FFmpeg installation:
+
+```bash
 ffmpeg -version
 ```
 
-## 2. Backend Setup (in VS Code terminal)
+---
+
+## Installation
+
+Clone the repository:
 
 ```bash
-cd video-transcriber/backend
+git clone https://github.com/AnshKaul8/video_transcriber.git
+```
+
+Go to the project:
+
+```bash
+cd video_transcriber/backend
+```
+
+Create a virtual environment:
+
+```bash
 python -m venv venv
+```
 
-# Activate venv
-# Windows:
+Activate it:
+
+### Windows
+
+```bash
 venv\Scripts\activate
-# Mac/Linux:
-source venv/bin/activate
+```
 
+### Linux / macOS
+
+```bash
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
-## 3. Run the Backend
+---
+
+## Run Backend
+
+Inside the **backend** folder run:
 
 ```bash
-uvicorn main:app --reload --port 8000
+python -m uvicorn main:app --reload --port 8000
 ```
 
-First run will download the Whisper model automatically (a few hundred MB, one-time only).
-Once you see "Model loaded successfully", the backend is ready.
+The backend will be available at:
 
-Backend will be running at: http://localhost:8000
+```
+http://localhost:8000
+```
 
-## 4. Run the Frontend
+The first launch will download the **Large-v3 Whisper model**, which may take a few minutes depending on your internet connection.
 
-Just open `frontend/index.html` directly in your browser
-(double-click it, or right-click → "Open with Live Server" if you have that VS Code extension).
+---
 
-## 5. Use It
+## Run Frontend
 
-1. Open the page in your browser
-2. Click "Select your video file" and choose an .mp4
-3. Click "Generate Transcript"
-4. Wait for processing (depends on video length + your CPU/GPU)
-5. View transcript on screen, or download as .txt / .srt
+Open
 
-## Where transcripts are saved (your private copy)
+```
+frontend/index.html
+```
 
-- All transcripts are saved permanently in `backend/transcripts/` as `{job_id}.txt` and `{job_id}.srt`
-- A running log of every video processed is kept in `backend/transcript_log.jsonl`
-  (includes filename, detected language, timestamp, and file paths)
-- This log is for your own records — it is not exposed to users through the website
+in your browser.
 
-## Notes on performance
+Upload an MP4 video and click **Generate Transcript**.
 
-- Default model is "medium" (good multilingual accuracy, moderate speed on CPU)
-- For faster processing: change `MODEL_SIZE = "small"` or `"base"` in main.py (less accurate)
-- For better accuracy: change to `MODEL_SIZE = "large-v3"` (slower on CPU)
-- If you have an NVIDIA GPU: set `DEVICE = "cuda"` and `COMPUTE_TYPE = "float16"` in main.py — much faster
+---
 
-## Deployment (when ready to go live)
+## Output
 
-- Backend: deploy to Railway, Render, or a GPU instance on RunPod (recommended if videos are long)
-- Frontend: deploy `index.html` to Vercel/Netlify, or serve it via FastAPI itself
-- Update `API_BASE` in index.html to your deployed backend URL instead of localhost
-- Add file size limits and rate limiting before going public, to avoid abuse
+Generated transcripts are saved inside:
+
+```
+backend/transcripts/
+```
+
+Available formats:
+
+- TXT
+- SRT
+
+Temporary uploaded videos are automatically removed after processing.
+
+---
+
+## Tech Stack
+
+- Python
+- FastAPI
+- Faster-Whisper
+- FFmpeg
+- HTML
+- CSS
+- JavaScript
+
+---
+
+## Notes
+
+- Only MP4 videos are supported.
+- Longer videos take more processing time.
+- The project currently runs locally.
+
+---
+
+## License
+
+This project is intended for educational and personal use.
