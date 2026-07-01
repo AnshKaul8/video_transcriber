@@ -1,8 +1,6 @@
-# 🎥 Video Transcriber
+# Video Transcriber
 
-An AI-powered video transcription application built with **FastAPI** and **Faster-Whisper Large-v3**.
-
-The application accepts an MP4 video, extracts its audio using FFmpeg, transcribes the speech, translates it into English, and allows the transcript to be downloaded as both **TXT** and **SRT** files.
+The application accepts an MP4 video, extracts its audio using FFmpeg, transcribes the speech, translates it into English, and allows the transcript to be downloaded.
 
 ---
 
