@@ -36,7 +36,7 @@ video-transcriber/
 
 ## Requirements
 
-- Python 3.11 or newer
+- Python 3.11 (Recommended)
 - FFmpeg installed and added to PATH
 
 Verify FFmpeg installation:
