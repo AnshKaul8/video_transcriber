@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Video Transcriber</title>
+<style>
+  body {
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    background: #0f1117;
+    color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 640px;
+    width: 100%;
+  }
+  h1 {
+    font-size: 1.6rem;
+    margin-bottom: 4px;
+  }
+  p.subtitle {
+    color: #9a9a9a;
+    margin-top: 0;
+    margin-bottom: 28px;
+  }
+  .upload-box {
+    border: 2px dashed #3a3d46;
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    background: #161821;
+  }
+  input[type="file"] {
+    margin: 16px 0;
+    color: #f0f0f0;
+  }
+  button {
+    background: #4f7cff;
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  button:disabled {
+    background: #3a3d46;
+    cursor: not-allowed;
+  }
+  .status {
+    margin-top: 16px;
+    color: #c9c9c9;
+    font-size: 0.95rem;
+  }
+  .result {
+    margin-top: 28px;
+    background: #161821;
+    border-radius: 12px;
+    padding: 20px;
+    display: none;
+  }
+  .result h3 {
+    margin-top: 0;
+  }
+  .meta {
+    color: #9a9a9a;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  .transcript-box {
+    max-height: 300px;
+    overflow-y: auto;
+    background: #0f1117;
+    padding: 14px;
+    border-radius: 8px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  .downloads {
+    margin-top: 16px;
+    display: flex;
+    gap: 12px;
+  }
+  .downloads a {
+    background: #232633;
+    color: #f0f0f0;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .downloads a:hover {
+    background: #2c3040;
+  }
+  .privacy-note {
+    margin-top: 20px;
+    font-size: 0.78rem;
+    color: #6e7280;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Video Transcriber</h1>
+  <p class="subtitle">Upload an MP4 video.</p>
+
+  <div class="upload-box">
+    <div>🎥 Select your video file</div>
+    <input type="file" id="videoInput" accept="video/mp4">
+    <br>
+    <button id="uploadBtn" onclick="uploadVideo()">Generate Transcript</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="result" id="resultBox">
+    <h3>Transcript</h3>
+    <div class="meta" id="meta"></div>
+    <div class="transcript-box" id="transcriptText"></div>
+    <div class="downloads">
+      <a id="downloadTxt" href="#" target="_blank">Download .txt</a>
+      <a id="downloadSrt" href="#" target="_blank">Download .srt</a>
+    </div>
+  </div>
+
+  <p class="privacy-note">Your video is processed securely on our server to generate this transcript.</p>
+</div>
+
+<script>
+  // Change this if backend runs on a different host/port
+  const API_BASE = "http://localhost:8000";
+
+  async function uploadVideo() {
+    const input = document.getElementById("videoInput");
+    const status = document.getElementById("status");
+    const btn = document.getElementById("uploadBtn");
+    const resultBox = document.getElementById("resultBox");
+
+    if (!input.files.length) {
+      status.textContent = "Please select an MP4 file first.";
+      return;
+    }
+
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    btn.disabled = true;
+    status.textContent = "Uploading and processing... this can take a minute depending on video length.";
+    resultBox.style.display = "none";
+
+    try {
+      const response = await fetch(`${API_BASE}/transcribe`, {
+        method: "POST",
+        body: formData
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || "Something went wrong");
+      }
+
+      const data = await response.json();
+
+      document.getElementById("meta").textContent =
+        `Detected language: ${data.detected_language} (confidence: ${data.language_confidence})`;
+      document.getElementById("transcriptText").textContent = data.transcript;
+      document.getElementById("downloadTxt").href = `${API_BASE}${data.download_txt}`;
+      document.getElementById("downloadSrt").href = `${API_BASE}${data.download_srt}`;
+
+      resultBox.style.display = "block";
+      status.textContent = "Done!";
+    } catch (e) {
+      status.textContent = "Error: " + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

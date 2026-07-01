@@ -1,0 +1,26 @@
+# Python
+backend/__pycache__/
+backend/*.pyc
+backend/venv/
+
+# Uploads
+backend/uploads/
+backend/transcripts/
+backend/transcript_log.jsonl
+
+# Environment
+backend/.env
+frontend/.env
+
+# Node
+frontend/node_modules/
+
+# Build
+frontend/dist/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
